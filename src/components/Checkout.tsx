@@ -105,7 +105,7 @@ Please confirm this order to proceed. Thank you for choosing Tay Kulas Bahai Buk
     `.trim();
 
     const encodedMessage = encodeURIComponent(orderDetails);
-    const messengerUrl = `https://m.me/61584779723470?text=${encodedMessage}`;
+    const messengerUrl = `https://m.me/Taykulasbahaibuko001?text=${encodedMessage}`;
     
     window.open(messengerUrl, '_blank');
     
