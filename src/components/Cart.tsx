@@ -1,6 +1,7 @@
 import React from 'react';
 import { Trash2, Plus, Minus, ArrowLeft } from 'lucide-react';
 import { CartItem } from '../types';
+import { useFormattedPrice } from '../utils/formatPrice';
 
 interface CartProps {
   cartItems: CartItem[];
@@ -21,6 +22,7 @@ const Cart: React.FC<CartProps> = ({
   onContinueShopping,
   onCheckout
 }) => {
+  const formatPrice = useFormattedPrice();
   if (cartItems.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-12">
@@ -77,7 +79,7 @@ const Cart: React.FC<CartProps> = ({
                     ).join(', ')}
                   </p>
                 )}
-                <p className="text-lg font-semibold text-black">₱{item.totalPrice} each</p>
+                <p className="text-lg font-semibold text-black">{formatPrice(item.totalPrice)} each</p>
               </div>
               
               <div className="flex items-center space-x-4 ml-4">
@@ -98,7 +100,7 @@ const Cart: React.FC<CartProps> = ({
                 </div>
                 
                 <div className="text-right">
-                  <p className="text-lg font-semibold text-black">₱{item.totalPrice * item.quantity}</p>
+                  <p className="text-lg font-semibold text-black">{formatPrice(item.totalPrice * item.quantity)}</p>
                 </div>
                 
                 <button
@@ -116,7 +118,7 @@ const Cart: React.FC<CartProps> = ({
       <div className="bg-white rounded-xl shadow-sm p-6">
         <div className="flex items-center justify-between text-2xl font-noto font-semibold text-black mb-6">
           <span>Total:</span>
-          <span>₱{parseFloat(getTotalPrice() || 0).toFixed(2)}</span>
+          <span>{formatPrice(parseFloat(getTotalPrice() || 0))}</span>
         </div>
         
         <button

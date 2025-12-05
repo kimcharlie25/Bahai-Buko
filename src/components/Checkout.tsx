@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { ArrowLeft, Clock } from 'lucide-react';
 import { CartItem, PaymentMethod, ServiceType } from '../types';
 import { usePaymentMethods } from '../hooks/usePaymentMethods';
+import { useFormattedPrice } from '../utils/formatPrice';
+import { useSiteSettings } from '../hooks/useSiteSettings';
 
 interface CheckoutProps {
   cartItems: CartItem[];
@@ -11,6 +13,8 @@ interface CheckoutProps {
 
 const Checkout: React.FC<CheckoutProps> = ({ cartItems, totalPrice, onBack }) => {
   const { paymentMethods } = usePaymentMethods();
+  const formatPrice = useFormattedPrice();
+  const { siteSettings } = useSiteSettings();
   const [step, setStep] = useState<'details' | 'payment'>('details');
   const [customerName, setCustomerName] = useState('');
   const [contactNumber, setContactNumber] = useState('');
@@ -59,8 +63,9 @@ const Checkout: React.FC<CheckoutProps> = ({ cartItems, totalPrice, onBack }) =>
         })}`
       : '';
     
+    const siteName = siteSettings?.site_name || 'Tay Kulas Bahai Buko';
     const orderDetails = `
-🛒 ClickEats ORDER
+🛒 ${siteName} ORDER
 
 👤 Customer: ${customerName}
 📞 Contact: ${contactNumber}
@@ -83,11 +88,12 @@ ${cartItems.map(item => {
         : addOn.name
     ).join(', ')}`;
   }
-  itemDetails += ` x${item.quantity} - ₱${item.totalPrice * item.quantity}`;
+  const currency = siteSettings?.currency || '₱';
+  itemDetails += ` x${item.quantity} - ${currency}${(item.totalPrice * item.quantity).toFixed(2)}`;
   return itemDetails;
 }).join('\n')}
 
-💰 TOTAL: ₱${totalPrice}
+💰 TOTAL: ${formatPrice(totalPrice)}
 ${serviceType === 'delivery' ? `🛵 DELIVERY FEE:` : ''}
 
 💳 Payment: ${selectedPaymentMethod?.name || paymentMethod}
@@ -95,11 +101,11 @@ ${serviceType === 'delivery' ? `🛵 DELIVERY FEE:` : ''}
 
 ${notes ? `📝 Notes: ${notes}` : ''}
 
-Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
+Please confirm this order to proceed. Thank you for choosing Tay Kulas Bahai Buko! 
     `.trim();
 
     const encodedMessage = encodeURIComponent(orderDetails);
-    const messengerUrl = `https://m.me/61579693577478?text=${encodedMessage}`;
+    const messengerUrl = `https://m.me/61584779723470?text=${encodedMessage}`;
     
     window.open(messengerUrl, '_blank');
     
@@ -142,9 +148,9 @@ Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
                         Add-ons: {item.selectedAddOns.map(addOn => addOn.name).join(', ')}
                       </p>
                     )}
-                    <p className="text-sm text-gray-600">₱{item.totalPrice} x {item.quantity}</p>
+                    <p className="text-sm text-gray-600">{formatPrice(item.totalPrice)} x {item.quantity}</p>
                   </div>
-                  <span className="font-semibold text-black">₱{item.totalPrice * item.quantity}</span>
+                  <span className="font-semibold text-black">{formatPrice(item.totalPrice * item.quantity)}</span>
                 </div>
               ))}
             </div>
@@ -152,7 +158,7 @@ Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
             <div className="border-t border-red-200 pt-4">
               <div className="flex items-center justify-between text-2xl font-noto font-semibold text-black">
                 <span>Total:</span>
-                <span>₱{totalPrice}</span>
+                <span>{formatPrice(totalPrice)}</span>
               </div>
             </div>
           </div>
@@ -398,7 +404,7 @@ Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
                   <p className="text-sm text-gray-600 mb-1">{selectedPaymentMethod.name}</p>
                   <p className="font-mono text-black font-medium">{selectedPaymentMethod.account_number}</p>
                   <p className="text-sm text-gray-600 mb-3">Account Name: {selectedPaymentMethod.account_name}</p>
-                  <p className="text-xl font-semibold text-black">Amount: ₱{totalPrice}</p>
+                  <p className="text-xl font-semibold text-black">Amount: {formatPrice(totalPrice)}</p>
                 </div>
                 <div className="flex-shrink-0">
                   <img 
@@ -480,9 +486,9 @@ Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
                       ).join(', ')}
                     </p>
                   )}
-                  <p className="text-sm text-gray-600">₱{item.totalPrice} x {item.quantity}</p>
+                  <p className="text-sm text-gray-600">{formatPrice(item.totalPrice)} x {item.quantity}</p>
                 </div>
-                <span className="font-semibold text-black">₱{item.totalPrice * item.quantity}</span>
+                <span className="font-semibold text-black">{formatPrice(item.totalPrice * item.quantity)}</span>
               </div>
             ))}
           </div>
@@ -490,7 +496,7 @@ Please confirm this order to proceed. Thank you for choosing ClickEats! 🥟
           <div className="border-t border-red-200 pt-4 mb-6">
             <div className="flex items-center justify-between text-2xl font-noto font-semibold text-black">
               <span>Total:</span>
-              <span>₱{totalPrice}</span>
+              <span>{formatPrice(totalPrice)}</span>
             </div>
           </div>
 
